@@ -1,9 +1,9 @@
 #! /bin/sh
-# create by Arrui.c@gmail.com 
+# create by Arrui.c@gmail.com
 # Version code:2.0
-# 命令使用方法 btc.sh [美元汇率（默认6.3）] [10000算力btc每天收益] [当前一个btc价格] [1算力成本（默认838）] [电费成本（单位kw/h，默认0.35）] 
+# 命令使用方法 btc.sh [美元汇率（默认6.3）] [10000算力btc每天收益] [当前一个btc价格] [1算力成本（默认400）] [电费成本（单位kw/h，默认0.35）]
 if [ $# -lt 3 ] ; then
-echo "命令使用方法 btc.sh [美元汇率（默认6.3）] [10000算力btc每天收益] [当前一个btc价格] [1算力成本（默认838）] [电费成本（单位kw/h，默认0.35）]"
+echo "命令使用方法 btc.sh [美元汇率（默认6.3）] [10000算力btc每天收益] [当前一个btc价格] [1算力成本（默认400）] [电费成本（单位kw/h，默认0.35）]"
 exit 0
 fi
 # 参数1 =======>> 美元汇率（默认6.3）
@@ -16,7 +16,7 @@ USD_rate=$1
 # 1算力成本
 # 电费成本（单位kw/h）
 if [ $# -eq 3 ];then
-	one_calculate_fee=838
+	one_calculate_fee=400
 	electricity_unit_price=0.35
 elif [ $# -eq 4 ];then
 	one_calculate_fee=$4
@@ -42,8 +42,10 @@ total_maintance_fee=680000
 # echo $(($total_maintance_fee/(365*3)))
 one_day_fee=$(($(echo "$total_calculate_fee*$machine_depreciation_rate/365"|bc)+$(($total_maintance_fee/(365*3)))))
 # echo $one_day_fee
+# 10000算力每小时耗电
+one_hour_elec_v=277
 # 每天电力费用
-electricity_fee=$(echo "$electricity_unit_price*24*10"|bc)
+electricity_fee=$(echo "$electricity_unit_price*24*$one_hour_elec_v"|bc)
 # echo $electricity_fee
 # 每天人力成本，按时薪100算，一天2400
 human_resorce_fee=2400
@@ -74,7 +76,7 @@ else
 	echo "btc保底价格:" $btc_l_price "RMB" "≈" $(echo "$btc_l_price/$USD_rate"|bc)"USD"
 	echo "btc实时价格:" $3 "RMB" "≈" $(echo "$3/$USD_rate"|bc)"USD"
 	echo "btc当前溢价:" $(echo "$(echo "scale=2; $3 / $btc_l_price"|bc)*100"|bc) "%"
-	
+
 	profit_one_day=$(echo "$(echo "$3 * $2"|bc) - $total_fee_one_day"|bc)
 	echo "当天净利润:" $profit_one_day "RMB" "≈" $(echo "$profit_one_day/$USD_rate"|bc)"USD"
 	recover_days=$(echo "$(($total_calculate_fee+$total_maintance_fee))/$profit_one_day"|bc)
