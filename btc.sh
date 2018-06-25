@@ -1,34 +1,46 @@
 #! /bin/sh
 # create by Arrui.c@gmail.com
-# Version code:2.0
-# 命令使用方法 btc.sh [美元汇率（默认6.3）] [10000算力btc每天收益] [当前一个btc价格] [1算力成本（默认400）] [电费成本（单位kw/h，默认0.35）]
+# Version code:2.1
+# 此版本默认值采用蚂蚁矿机S9i 14T（含APW7电源）为原型，功率1320W，当前官网价格5250元（波动）
+# 命令使用方法 btc.sh [美元汇率（默认6.3）] [10000算力btc每天收益] [当前一个btc价格] [1算力成本] [1小时每算力耗电量] [电费成本（单位kw/h，默认0.35）]
 if [ $# -lt 3 ] ; then
-echo "命令使用方法 btc.sh [美元汇率（默认6.3）] [10000算力btc每天收益] [当前一个btc价格] [1算力成本（默认400）] [电费成本（单位kw/h，默认0.35）]"
+echo "命令使用方法 btc.sh [美元汇率（默认6.3）] [10000算力btc每天收益] [当前一个btc价格] [1算力成本] [1小时每算力耗电量] [电费成本（单位kw/h，默认0.35）]"
 exit 0
 fi
 # 参数1 =======>> 美元汇率（默认6.3）
 # 参数2 =======>> 10000算力btc每天收益（单位个）
 # 参数3 =======>> 当前一个btc价格
 # 参数4 =======>> 1算力成本
-# 参数5 =======>> 电费成本（单位kw/h，默认0.35）
+# 参数5 =======>> 1小时每算力耗电量
+# 参数6 =======>> 电费成本（单位kw/h，默认0.35）
 # 美元汇率（默认6.3）
 USD_rate=$1
-# 1算力成本
-# 电费成本（单位kw/h）
+# 1算力成本(one_calculate_fee)
+# 1小时每算力耗电量(one_hour_elec_s)
+# 电费成本（electricity_unit_price单位kw/h）
 if [ $# -eq 3 ];then
-	one_calculate_fee=400
+	one_calculate_fee=375
+	one_hour_elec_s=0.0262
 	electricity_unit_price=0.35
 elif [ $# -eq 4 ];then
 	one_calculate_fee=$4
+	one_hour_elec_s=0.0262
 	electricity_unit_price=0.35
 elif [ $# -eq 5 ];then
 	one_calculate_fee=$4
-	electricity_unit_price=$5
+	one_hour_elec_s=$5
+	electricity_unit_price=0.35
+elif [[ $# -eq 6 ]]; then
+	one_calculate_fee=$4
+	one_hour_elec_s=$5
+	electricity_unit_price=$6
 fi
-echo "美元汇率" $1
+echo "==================参数=================="
+echo "美元汇率" $USD_rate
 echo "10000算力btc每天收益（单位个）:" $2
 echo "当前一个btc价格:" $3"RMB"
 echo "1算力成本:" $one_calculate_fee
+echo "1小时每算力耗电量:" $one_hour_elec_s
 echo "电费成本（单位kw/h，默认0.35）:" $electricity_unit_price
 
 # 总算力成本
@@ -43,9 +55,10 @@ total_maintance_fee=680000
 one_day_fee=$(($(echo "$total_calculate_fee*$machine_depreciation_rate/365"|bc)+$(($total_maintance_fee/(365*3)))))
 # echo $one_day_fee
 # 10000算力每小时耗电
-one_hour_elec_v=277
+one_hour_elec_t=$(echo "$one_hour_elec_s*10000"|bc)
+# echo $one_hour_elec_t
 # 每天电力费用
-electricity_fee=$(echo "$electricity_unit_price*24*$one_hour_elec_v"|bc)
+electricity_fee=$(echo "$electricity_unit_price*24*$one_hour_elec_t"|bc)
 # echo $electricity_fee
 # 每天人力成本，按时薪100算，一天2400
 human_resorce_fee=2400
@@ -62,6 +75,7 @@ financing_fee_one_day=4215
 # financing_fee_one_day=0
 # echo $financing_fee_one_day
 
+echo "================计算结果================"
 # 每天总费用
 total_fee_one_day=$(echo "$one_day_fee+$electricity_fee+$financing_fee_one_day+$human_resorce_fee"|bc)
 echo "每日总费用" $total_fee_one_day "RMB" "≈" $(echo "$total_fee_one_day/$USD_rate"|bc)"USD"
