@@ -38,9 +38,9 @@ fi
 echo "==================参数=================="
 echo "美元汇率" $USD_rate
 echo "10000算力btc每天收益（单位个）:" $2
-echo "当前一个btc价格:" $3"RMB"
-echo "1算力成本:" $one_calculate_fee
-echo "1小时每算力耗电量:" $one_hour_elec_s
+echo "当前一个btc价格:" $3" RMB"
+echo "1算力成本:" $one_calculate_fee" RMB"
+echo "1小时每算力耗电量:" $one_hour_elec_s"kw/h"
 echo "电费成本（单位kw/h，默认0.35）:" $electricity_unit_price
 
 # 总算力成本
@@ -78,7 +78,7 @@ financing_fee_one_day=4215
 echo "================计算结果================"
 # 每天总费用
 total_fee_one_day=$(echo "$one_day_fee+$electricity_fee+$financing_fee_one_day+$human_resorce_fee"|bc)
-echo "每日总费用" $total_fee_one_day "RMB" "≈" $(echo "$total_fee_one_day/$USD_rate"|bc)"USD"
+echo "每日总费用" $total_fee_one_day "RMB" "≈" $(echo "$total_fee_one_day/$USD_rate"|bc)" USD"
 
 if [ ! -n '$2' ];then
 	echo "请输入每日btc收益（10000算力）"
@@ -87,12 +87,12 @@ else
 		echo "请输入当前btc价格"
 	else
 	btc_l_price=$(echo "$total_fee_one_day / $2" |bc)
-	echo "btc保底价格:" $btc_l_price "RMB" "≈" $(echo "$btc_l_price/$USD_rate"|bc)"USD"
-	echo "btc实时价格:" $3 "RMB" "≈" $(echo "$3/$USD_rate"|bc)"USD"
+	echo "btc保底价格:" $btc_l_price "RMB" "≈" $(echo "$btc_l_price/$USD_rate"|bc) "USD"
+	echo "btc实时价格:" $3 "RMB" "≈" $(echo "$3/$USD_rate"|bc) "USD"
 	echo "btc当前溢价:" $(echo "$(echo "scale=2; $3 / $btc_l_price"|bc)*100"|bc) "%"
 
 	profit_one_day=$(echo "$(echo "$3 * $2"|bc) - $total_fee_one_day"|bc)
-	echo "当天净利润:" $profit_one_day "RMB" "≈" $(echo "$profit_one_day/$USD_rate"|bc)"USD"
+	echo "当天净利润:" $profit_one_day "RMB" "≈" $(echo "$profit_one_day/$USD_rate"|bc) "USD"
 	recover_days=$(echo "$(($total_calculate_fee+$total_maintance_fee))/$profit_one_day"|bc)
 	echo "回本天数:" $recover_days "天"
 	echo "资金回笼/动态平衡:" $(echo "$pre_investment_fee/$profit_one_day"|bc) "天"
