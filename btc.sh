@@ -1,47 +1,57 @@
 #! /bin/sh
 # create by Arrui.c@gmail.com
-# Version code:2.1
-# 此版本默认值采用蚂蚁矿机S9i 14T（含APW7电源）为原型，功率1320W，当前官网价格5250元（波动）
-# 命令使用方法 btc.sh [美元汇率（默认6.3）] [10000算力btc每天收益] [当前一个btc价格] [1算力成本] [1小时每算力耗电量] [电费成本（单位kw/h，默认0.35）]
+# Version code:2.2
+# 此版本默认值采用蚂蚁矿机S9j 14.5T（含APW7电源）为原型，功率1350W，当前官网价格3750元（波动）
 if [ $# -lt 3 ] ; then
-echo "命令使用方法 btc.sh [美元汇率（默认6.3）] [10000算力btc每天收益] [当前一个btc价格] [1算力成本] [1小时每算力耗电量] [电费成本（单位kw/h，默认0.35）]"
+    echo "命令使用方法 btc.sh [美元汇率（默认6.3）] [10000算力btc每天收益] [当前一个btc价格] [1T算力成本] [1小时每T算力耗电量] [矿机型号（可选）] [电费成本（单位kw/h，默认0.35）]"
 exit 0
 fi
 # 参数1 =======>> 美元汇率（默认6.3）
 # 参数2 =======>> 10000算力btc每天收益（单位个）
 # 参数3 =======>> 当前一个btc价格
-# 参数4 =======>> 1算力成本
-# 参数5 =======>> 1小时每算力耗电量
-# 参数6 =======>> 电费成本（单位kw/h，默认0.35）
+# 参数4 =======>> 1T算力成本
+# 参数5 =======>> 1小时每T算力耗电量
+# 参数6 =======>> 矿机型号
+# 参数7 =======>> 电费成本（单位kw/h，默认0.35）
 # 美元汇率（默认6.3）
 USD_rate=$1
-# 1算力成本(one_calculate_fee)
-# 1小时每算力耗电量(one_hour_elec_s)
+# 1T算力成本(one_calculate_fee)
+# 1小时每T算力耗电量(one_hour_elec_s)
 # 电费成本（electricity_unit_price单位kw/h）
 if [ $# -eq 3 ];then
-	one_calculate_fee=375
-	one_hour_elec_s=0.0262
+	one_calculate_fee=258
+	one_hour_elec_s=0.026
 	electricity_unit_price=0.35
+    machine_model="蚂蚁矿机S9j 14.5T"
 elif [ $# -eq 4 ];then
 	one_calculate_fee=$4
-	one_hour_elec_s=0.0262
+	one_hour_elec_s=0.026
 	electricity_unit_price=0.35
+    machine_model="蚂蚁矿机S9j 14.5T"
 elif [ $# -eq 5 ];then
 	one_calculate_fee=$4
 	one_hour_elec_s=$5
 	electricity_unit_price=0.35
+    machine_model="蚂蚁矿机S9j 14.5T"
 elif [[ $# -eq 6 ]]; then
 	one_calculate_fee=$4
 	one_hour_elec_s=$5
-	electricity_unit_price=$6
+	electricity_unit_price=0.35
+    machine_model=$6
+elif [[ $# -eq 7 ]]; then
+	one_calculate_fee=$4
+	one_hour_elec_s=$5
+	electricity_unit_price=$7
+    machine_model=$6
 fi
 echo "==================参数=================="
 echo "美元汇率" $USD_rate
 echo "10000算力btc每天收益（单位个）:" $2
 echo "当前一个btc价格:" $3" RMB"
-echo "1算力成本:" $one_calculate_fee" RMB"
-echo "1小时每算力耗电量:" $one_hour_elec_s"kw/h"
+echo "1T算力成本:" $one_calculate_fee" RMB"
+echo "1小时每T算力耗电量:" $one_hour_elec_s"kw/h"
 echo "电费成本（单位kw/h，默认0.35）:" $electricity_unit_price
+echo "矿机型号:" $machine_model
 
 # 总算力成本
 total_calculate_fee=$(($one_calculate_fee*10000))
