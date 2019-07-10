@@ -19,20 +19,20 @@ USD_rate=$1
 # 1小时每T算力耗电量(one_hour_elec_s)
 # 电费成本（electricity_unit_price单位kw/h）
 if [ $# -eq 3 ];then
-	one_calculate_fee=258
-	one_hour_elec_s=0.026
+	one_calculate_fee=195
+	one_hour_elec_s=0.0153
 	electricity_unit_price=0.35
-    machine_model="蚂蚁矿机S9j 14.5T"
+    machine_model="蚂蚁矿机T17 40T"
 elif [ $# -eq 4 ];then
 	one_calculate_fee=$4
-	one_hour_elec_s=0.026
+	one_hour_elec_s=0.0153
 	electricity_unit_price=0.35
-    machine_model="蚂蚁矿机S9j 14.5T"
+    machine_model="蚂蚁矿机T17 40T"
 elif [ $# -eq 5 ];then
 	one_calculate_fee=$4
 	one_hour_elec_s=$5
 	electricity_unit_price=0.35
-    machine_model="蚂蚁矿机S9j 14.5T"
+    machine_model="蚂蚁矿机T17 40T"
 elif [[ $# -eq 6 ]]; then
 	one_calculate_fee=$4
 	one_hour_elec_s=$5
@@ -108,5 +108,19 @@ else
 	echo "资金回笼/动态平衡:" $(echo "$pre_investment_fee/$profit_one_day"|bc) "天"
 	echo "年化收益率:" $(echo "$(echo "scale=2;$profit_one_day/$total_fee_one_day"|bc)*100"|bc) "%"
  	echo "年净利润:" $(echo "$profit_one_day*365/10000"|bc)"万RMB"
+
+  echo "=============回本后每日利润=============="
+  total_fee_one_day=$(echo "$one_day_fee+$electricity_fee+$human_resorce_fee"|bc)
+  echo "每日总费用" $total_fee_one_day "RMB" "≈" $(echo "$total_fee_one_day/$USD_rate"|bc)" USD"
+
+  btc_l_price=$(echo "$total_fee_one_day / $2" |bc)
+  echo "btc保底价格:" $btc_l_price "RMB" "≈" $(echo "$btc_l_price/$USD_rate"|bc) "USD"
+  echo "btc实时价格:" $3 "RMB" "≈" $(echo "$3/$USD_rate"|bc) "USD"
+  echo "btc当前溢价:" $(echo "$(echo "scale=2; $3 / $btc_l_price"|bc)*100"|bc) "%"
+
+  profit_one_day=$(echo "$(echo "$3 * $2"|bc) - $total_fee_one_day"|bc)
+  echo "当天净利润:" $profit_one_day "RMB" "≈" $(echo "$profit_one_day/$USD_rate"|bc) "USD"
+  echo "年化收益率:" $(echo "$(echo "scale=2;$profit_one_day/$total_fee_one_day"|bc)*100"|bc) "%"
+  echo "年净利润:" $(echo "$profit_one_day*365/10000"|bc)"万RMB"
 	fi
 fi
