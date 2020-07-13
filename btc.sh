@@ -19,20 +19,20 @@ USD_rate=$1
 # 1小时每T算力耗电量(one_hour_elec_s)
 # 电费成本（electricity_unit_price单位kw/h）
 if [ $# -eq 3 ];then
-	one_calculate_fee=310
-	one_hour_elec_s=0.0125
+	one_calculate_fee=203
+	one_hour_elec_s=0.0111
 	electricity_unit_price=0.35
-    machine_model="蚂蚁矿机S17 53T"
+    machine_model="蚂蚁矿机S17+ 70T"
 elif [ $# -eq 4 ];then
 	one_calculate_fee=$4
-	one_hour_elec_s=0.0125
+	one_hour_elec_s=0.0111
 	electricity_unit_price=0.35
-    machine_model="蚂蚁矿机S17 53T"
+    machine_model="蚂蚁矿机S17+ 70T"
 elif [ $# -eq 5 ];then
 	one_calculate_fee=$4
 	one_hour_elec_s=$5
 	electricity_unit_price=0.35
-    machine_model="蚂蚁矿机S17 53T"
+    machine_model="蚂蚁矿机S17+ 70T"
 elif [[ $# -eq 6 ]]; then
 	one_calculate_fee=$4
 	one_hour_elec_s=$5
